@@ -1,12 +1,12 @@
 # Companion module for OnAirScreen
 
-Control [OnAirScreen](https://github.com/saschaludwig/OnAirScreen) from Bitfocus Companion 4: LEDs, AIR timers (including live MIC time), NOW / NEXT / WARN, and button colour from studio status.
+Control [OnAirScreen](https://github.com/saschaludwig/OnAirScreen) from Bitfocus Companion **4.3 or 5**: LEDs, AIR timers (including live MIC time), NOW / NEXT / WARN, and button colour from studio status.
 
 The module talks HTTP to OnAirScreen (default port **8010**) for commands. Live status prefers the OnAirScreen **WebSocket** (HTTP port + 1, so **8011** by default) and falls back to polling `GET /api/status` if the socket is down. OSC is not used.
 
 ## Requirements
 
-- Bitfocus Companion 4
+- Bitfocus Companion **4.3 or 5**
 - OnAirScreen running, HTTP reachable (**Settings → Network**, port `8010`)
 - Firewall: allow the HTTP port **and** HTTP+1 (WebSocket). If 8011 is blocked, the module keeps polling HTTP.
 

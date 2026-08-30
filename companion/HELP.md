@@ -1,6 +1,6 @@
 ## OnAirScreen
 
-Bitfocus Companion module for [OnAirScreen](https://github.com/saschaludwig/OnAirScreen) studio displays.
+Bitfocus Companion module for [OnAirScreen](https://github.com/saschaludwig/OnAirScreen) studio displays. Works with Companion **4.3 and 5**.
 
 Commands use the HTTP REST API (default port **8010**):
 
