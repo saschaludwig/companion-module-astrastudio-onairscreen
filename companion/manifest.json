@@ -5,7 +5,7 @@
 	"name": "astrastudio OnAirScreen",
 	"shortname": "oas",
 	"description": "Control OnAirScreen studio displays over HTTP: LEDs, AIR timers, text fields, and live status.",
-	"version": "1.0.0",
+	"version": "1.0.2",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-astrastudio-onairscreen.git",
 	"bugs": "https://github.com/bitfocus/companion-module-astrastudio-onairscreen/issues",
