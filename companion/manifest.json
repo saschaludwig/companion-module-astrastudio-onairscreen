@@ -7,8 +7,8 @@
 	"description": "Control OnAirScreen studio displays over HTTP: LEDs, AIR timers, text fields, and live status.",
 	"version": "1.0.0",
 	"license": "MIT",
-	"repository": "git+https://github.com/saschaludwig/companion-module-astrastudio-onairscreen.git",
-	"bugs": "https://github.com/saschaludwig/companion-module-astrastudio-onairscreen/issues",
+	"repository": "git+https://github.com/bitfocus/companion-module-astrastudio-onairscreen.git",
+	"bugs": "https://github.com/bitfocus/companion-module-astrastudio-onairscreen/issues",
 	"maintainers": [
 		{
 			"name": "Sascha Ludwig",
