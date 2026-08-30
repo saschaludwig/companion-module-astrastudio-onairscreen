@@ -2,12 +2,13 @@
 
 Control [OnAirScreen](https://github.com/saschaludwig/OnAirScreen) from Bitfocus Companion 4: LEDs, AIR timers (including live MIC time), NOW / NEXT / WARN, and button colour from studio status.
 
-The module talks HTTP to OnAirScreen (default port **8010**). OSC is not used.
+The module talks HTTP to OnAirScreen (default port **8010**) for commands. Live status prefers the OnAirScreen **WebSocket** (HTTP port + 1, so **8011** by default) and falls back to polling `GET /api/status` if the socket is down. OSC is not used.
 
 ## Requirements
 
 - Bitfocus Companion 4
 - OnAirScreen running, HTTP reachable (**Settings → Network**, port `8010`)
+- Firewall: allow the HTTP port **and** HTTP+1 (WebSocket). If 8011 is blocked, the module keeps polling HTTP.
 
 The module is not in the Companion Store yet. Use a `.tgz` from GitHub **Releases**.
 
@@ -17,10 +18,10 @@ The module is not in the Companion Store yet. Use a `.tgz` from GitHub **Release
 2. In Companion open **Modules**.
 3. Click **Import module package** and choose the `.tgz`.
 4. Open **Connections** → add a connection → search **astrastudio** / **OnAirScreen**.
-5. Set **OnAirScreen IP / Hostname** to the studio PC and **HTTP Port** to `8010` (must match OnAirScreen). Leave **Poll interval** at `500` ms unless you have a reason to change it.
-6. Optionally change the connection **Label** (default is often the module name). That label is the prefix for all variables.
+5. Set **OnAirScreen IP / Hostname** to the studio PC and **HTTP Port** to `8010` (must match OnAirScreen). Leave **Use WebSocket** on unless you must poll only. Leave **Poll interval** at `500` ms (used when WebSocket is off or disconnected).
+6. Set the connection **Label** to `oas` so variable examples in this README match (`$(oas:air1_time)`). Companion often defaults the label to the module name.
 
-The connection should show **OK**. If it stays disconnected, check IP, HTTP port, firewall, and that OnAirScreen is running.
+The connection should show **OK** plus instance name and version (for example `Studio-1 · 0.9.9beta2`). If it stays disconnected, check IP, HTTP port, firewall (8010 and 8011), and that OnAirScreen is running.
 
 To update, import a newer `.tgz` the same way. Existing connections keep their settings.
 
@@ -30,10 +31,11 @@ To update, import a newer `.tgz` the same way. Existing connections keep their s
 
 Under **Buttons → Presets**, pick this connection. There are:
 
-- **LEDs** — LED 1–4 toggle; colour follows OnAirScreen
-- **AIR timers** — AIR 1–4 with live time on the button (AIR1 = microphone / MIC), plus Top-of-Hour and Reset AIR3 / AIR4
+- **LEDs** — LED 1–4 toggle; caption and colour follow OnAirScreen
+- **AIR timers** — AIR 1–4 with live caption and time (`m:SS`) on the button (AIR1 = microphone), plus Top-of-Hour and Reset AIR3 / AIR4
+- **Texts / Alarms** — NOW / NEXT / WARN display, Clear WARN, Silence alarm
 
-Drag a preset onto a Stream Deck (or other) button. Press to toggle; the button shows the current timer as `m:SS`.
+Drag a preset onto a Stream Deck (or other) button. Press to toggle; AIR buttons show the current timer as `m:SS`.
 
 ### Button text (variables)
 
@@ -43,10 +45,10 @@ The **Label** of the connection is the variable prefix. If the label is `oas`:
 $(oas:air1_time)
 ```
 
-shows the MIC timer (`125` seconds → `2:05`). Combine with a caption:
+shows the MIC timer (`125` seconds → `2:05`). Combine with the live caption from OnAirScreen:
 
 ```text
-MIC
+$(oas:air1_text)
 $(oas:air1_time)
 ```
 
@@ -60,6 +62,8 @@ Use the variable picker (dollar sign) next to the button text field so the prefi
 | `air{1-4}_text`         | Timer caption (Mic, Phone, …)         |
 | `led{1-4}_status`       | `true` / `false`                      |
 | `led{1-4}_text`         | LED caption                           |
+| `led{1-4}_autoflash`    | Autoflash enabled                     |
+| `led{1-4}_timedflash`   | Timedflash enabled                    |
 | `air3_toth`             | Top-of-hour countdown active          |
 | `now` / `next` / `warn` | Text lines                            |
 | `silence`               | Silence alarm latched                 |
@@ -67,9 +71,11 @@ Use the variable picker (dollar sign) next to the button text field so the prefi
 
 ### Actions and feedbacks
 
-On a button you can add actions such as **LED**, **AIR timer**, **Reset AIR timer**, **AIR3 top-of-hour**, **Set AIR3 time**, **Set text field**, or **Raw command**.
+On a button you can add actions such as **LED**, **AIR timer**, **Reset AIR timer**, **AIR3 top-of-hour**, **Set AIR3 time** (`2:05` or raw seconds), **Set text field**, **WARN** (priority 0 / 1 / 2; empty text clears that priority), or **Raw command**.
 
-Boolean feedbacks colour the button: LED on, AIR running, AIR3 TOTH, Silence, WARN not empty.
+A failed HTTP command is reported as a failed Companion action. After a successful command the module re-reads `/api/status` immediately so button colour does not wait for the next poll.
+
+Boolean feedbacks colour the button: LED on, LED autoflash, LED timedflash, AIR running, AIR3 TOTH, Silence, WARN not empty.
 
 ## License
 

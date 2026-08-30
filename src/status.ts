@@ -6,6 +6,8 @@ export type SlotNumber = (typeof SLOT_NUMBERS)[number]
 export type LedStatus = {
 	status: boolean
 	text: string
+	autoflash: boolean
+	timedflash: boolean
 }
 
 export type AirStatus = {
@@ -27,7 +29,7 @@ export type OasStatus = {
 	version: string
 }
 
-const EMPTY_LED: LedStatus = { status: false, text: '' }
+const EMPTY_LED: LedStatus = { status: false, text: '', autoflash: false, timedflash: false }
 const EMPTY_AIR: AirStatus = { status: false, seconds: 0, text: '', topOfHour: false }
 
 export function emptyStatus(): OasStatus {
@@ -105,6 +107,8 @@ function parseLed(value: unknown): LedStatus {
 	return {
 		status: asBool(rec.status),
 		text: asString(rec.text),
+		autoflash: asBool(rec.autoflash),
+		timedflash: asBool(rec.timedflash),
 	}
 }
 
@@ -144,13 +148,27 @@ export function parseStatus(raw: unknown): OasStatus {
 	return status
 }
 
+function slotOrUndefined(n: SlotNumber | number): SlotNumber | undefined {
+	return SLOT_NUMBERS.find((item) => item === n)
+}
+
 export function isLedOn(status: OasStatus, n: SlotNumber | number): boolean {
-	const slot = SLOT_NUMBERS.find((item) => item === n)
+	const slot = slotOrUndefined(n)
 	return slot ? status.leds[slot].status : false
 }
 
+export function isLedAutoflash(status: OasStatus, n: SlotNumber | number): boolean {
+	const slot = slotOrUndefined(n)
+	return slot ? status.leds[slot].autoflash : false
+}
+
+export function isLedTimedflash(status: OasStatus, n: SlotNumber | number): boolean {
+	const slot = slotOrUndefined(n)
+	return slot ? status.leds[slot].timedflash : false
+}
+
 export function isAirOn(status: OasStatus, n: SlotNumber | number): boolean {
-	const slot = SLOT_NUMBERS.find((item) => item === n)
+	const slot = slotOrUndefined(n)
 	return slot ? status.air[slot].status : false
 }
 
@@ -164,6 +182,15 @@ export function isSilence(status: OasStatus): boolean {
 
 export function isWarnActive(status: OasStatus): boolean {
 	return status.warn.trim() !== '' || status.warnings.length > 0
+}
+
+export function connectionStatusMessage(status: OasStatus): string | undefined {
+	const instance = status.instance.trim()
+	const version = status.version.trim()
+	if (instance && version) {
+		return `${instance} · ${version}`
+	}
+	return instance || version || undefined
 }
 
 export function statusToVariableValues(status: OasStatus): Record<string, string> {
@@ -182,6 +209,8 @@ export function statusToVariableValues(status: OasStatus): Record<string, string
 		const air = status.air[n]
 		values[`led${n}_status`] = boolToVariable(led.status)
 		values[`led${n}_text`] = led.text
+		values[`led${n}_autoflash`] = boolToVariable(led.autoflash)
+		values[`led${n}_timedflash`] = boolToVariable(led.timedflash)
 		values[`air${n}_status`] = boolToVariable(air.status)
 		values[`air${n}_seconds`] = String(air.seconds)
 		values[`air${n}_time`] = formatAirTime(air.seconds)

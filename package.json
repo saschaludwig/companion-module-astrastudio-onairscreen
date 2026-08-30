@@ -1,6 +1,6 @@
 {
 	"name": "companion-module-astrastudio-onairscreen",
-	"version": "0.1.1",
+	"version": "1.0.1",
 	"main": "dist/main.js",
 	"type": "module",
 	"scripts": {

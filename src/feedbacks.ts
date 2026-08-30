@@ -1,9 +1,31 @@
 import { combineRgb } from '@companion-module/base'
 import type ModuleInstance from './main.js'
-import { isAir3Toth, isAirOn, isLedOn, isSilence, isWarnActive, SLOT_NUMBERS, type SlotNumber } from './status.js'
+import {
+	isAir3Toth,
+	isAirOn,
+	isLedAutoflash,
+	isLedOn,
+	isLedTimedflash,
+	isSilence,
+	isWarnActive,
+	SLOT_NUMBERS,
+	type SlotNumber,
+} from './status.js'
 
 export type FeedbacksSchema = {
 	led_on: {
+		type: 'boolean'
+		options: {
+			led: SlotNumber
+		}
+	}
+	led_autoflash: {
+		type: 'boolean'
+		options: {
+			led: SlotNumber
+		}
+	}
+	led_timedflash: {
 		type: 'boolean'
 		options: {
 			led: SlotNumber
@@ -34,9 +56,16 @@ const ACTIVE_STYLE = {
 	color: combineRgb(255, 255, 255),
 }
 
+const FLASH_STYLE = {
+	bgcolor: combineRgb(128, 0, 128),
+	color: combineRgb(255, 255, 255),
+}
+
 function asSlot(value: number): SlotNumber {
 	return SLOT_NUMBERS.find((item) => item === value) ?? 1
 }
+
+const LED_CHOICES = SLOT_NUMBERS.map((n) => ({ id: n, label: `LED ${n}` }))
 
 export function UpdateFeedbacks(self: ModuleInstance): void {
 	self.setFeedbackDefinitions({
@@ -50,7 +79,7 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 					type: 'dropdown',
 					label: 'LED',
 					default: 1,
-					choices: SLOT_NUMBERS.map((n) => ({ id: n, label: `LED ${n}` })),
+					choices: LED_CHOICES,
 				},
 			],
 			callback: (feedback) => {
@@ -58,6 +87,46 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 					return false
 				}
 				return isLedOn(self.lastStatus, asSlot(feedback.options.led))
+			},
+		},
+		led_autoflash: {
+			name: 'LED autoflash is enabled',
+			type: 'boolean',
+			defaultStyle: FLASH_STYLE,
+			options: [
+				{
+					id: 'led',
+					type: 'dropdown',
+					label: 'LED',
+					default: 1,
+					choices: LED_CHOICES,
+				},
+			],
+			callback: (feedback) => {
+				if (!self.lastStatus) {
+					return false
+				}
+				return isLedAutoflash(self.lastStatus, asSlot(feedback.options.led))
+			},
+		},
+		led_timedflash: {
+			name: 'LED timedflash is enabled',
+			type: 'boolean',
+			defaultStyle: FLASH_STYLE,
+			options: [
+				{
+					id: 'led',
+					type: 'dropdown',
+					label: 'LED',
+					default: 1,
+					choices: LED_CHOICES,
+				},
+			],
+			callback: (feedback) => {
+				if (!self.lastStatus) {
+					return false
+				}
+				return isLedTimedflash(self.lastStatus, asSlot(feedback.options.led))
 			},
 		},
 		air_on: {

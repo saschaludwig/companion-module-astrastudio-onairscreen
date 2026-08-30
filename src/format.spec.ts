@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-import { boolToVariable, formatAirTime } from './format.ts'
+import { boolToVariable, formatAirTime, parseAirTimeToSeconds } from './format.ts'
 
 describe('formatAirTime', () => {
 	it('formats like OnAirScreen int(seconds/60):seconds%60:02d', () => {
@@ -24,5 +24,21 @@ describe('boolToVariable', () => {
 	it('uses true/false strings', () => {
 		assert.equal(boolToVariable(true), 'true')
 		assert.equal(boolToVariable(false), 'false')
+	})
+})
+
+describe('parseAirTimeToSeconds', () => {
+	it('parses m:ss and raw seconds', () => {
+		assert.equal(parseAirTimeToSeconds('2:05'), 125)
+		assert.equal(parseAirTimeToSeconds('0:00'), 0)
+		assert.equal(parseAirTimeToSeconds('0:30'), 30)
+		assert.equal(parseAirTimeToSeconds('125'), 125)
+		assert.equal(parseAirTimeToSeconds(' 2:05 '), 125)
+	})
+
+	it('rejects empty, seconds over 59, and junk', () => {
+		assert.throws(() => parseAirTimeToSeconds(''), /empty/)
+		assert.throws(() => parseAirTimeToSeconds('2:60'), /0-59/)
+		assert.throws(() => parseAirTimeToSeconds('abc'), /m:ss or seconds/)
 	})
 })

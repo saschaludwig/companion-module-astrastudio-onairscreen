@@ -1,10 +1,19 @@
 import type ModuleInstance from './main.js'
 import { sendCommand } from './api.js'
+import {
+	air3TimeFromClock,
+	air3TohCommand,
+	airCommand,
+	airResetCommand,
+	ledCommand,
+	textFieldCommand,
+	warnCommand,
+	type ResetAir,
+	type TextField,
+	type ToggleState,
+	type WarnPriority,
+} from './commands.js'
 import { SLOT_NUMBERS, type SlotNumber } from './status.js'
-
-export type ToggleState = 'ON' | 'OFF' | 'TOGGLE'
-export type TextField = 'NOW' | 'NEXT' | 'WARN'
-export type ResetAir = 3 | 4
 
 export type ActionsSchema = {
 	led: {
@@ -31,12 +40,18 @@ export type ActionsSchema = {
 	}
 	air3_time: {
 		options: {
-			seconds: number
+			time: string
 		}
 	}
 	set_text: {
 		options: {
 			field: TextField
+			text: string
+		}
+	}
+	warn: {
+		options: {
+			priority: WarnPriority
 			text: string
 		}
 	}
@@ -59,17 +74,41 @@ const AIR_CHOICES = SLOT_NUMBERS.map((n) => ({
 	label: n === 1 ? 'AIR 1 (MIC)' : `AIR ${n}`,
 }))
 
+const WARN_PRIORITY_CHOICES = [
+	{ id: 0, label: '0 — Normal / Legacy (WARN:text)' },
+	{ id: 1, label: '1 — Medium (WARN:1:text)' },
+	{ id: 2, label: '2 — High (WARN:2:text)' },
+]
+
 async function send(self: ModuleInstance, command: string): Promise<void> {
 	try {
 		await sendCommand(self.config.host, self.config.port, command)
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error)
 		self.log('error', `Command "${command}" failed: ${message}`)
+		throw error
 	}
+	await self.refreshStatus()
 }
 
-function asSlot(value: number): SlotNumber {
-	return SLOT_NUMBERS.find((item) => item === value) ?? 1
+function asSlot(value: number | string): SlotNumber {
+	const n = Number(value)
+	return SLOT_NUMBERS.find((item) => item === n) ?? 1
+}
+
+function asWarnPriority(value: number | string): WarnPriority {
+	const n = Number(value)
+	if (n === 1 || n === 2) {
+		return n
+	}
+	return 0
+}
+
+function asTextField(value: string): TextField {
+	if (value === 'NEXT' || value === 'WARN') {
+		return value
+	}
+	return 'NOW'
 }
 
 export function UpdateActions(self: ModuleInstance): void {
@@ -94,7 +133,7 @@ export function UpdateActions(self: ModuleInstance): void {
 				},
 			],
 			callback: async (event) => {
-				await send(self, `LED${asSlot(event.options.led)}:${event.options.state}`)
+				await send(self, ledCommand(asSlot(event.options.led), event.options.state))
 			},
 		},
 		air: {
@@ -117,7 +156,7 @@ export function UpdateActions(self: ModuleInstance): void {
 				},
 			],
 			callback: async (event) => {
-				await send(self, `AIR${asSlot(event.options.air)}:${event.options.state}`)
+				await send(self, airCommand(asSlot(event.options.air), event.options.state))
 			},
 		},
 		air_reset: {
@@ -136,8 +175,8 @@ export function UpdateActions(self: ModuleInstance): void {
 				},
 			],
 			callback: async (event) => {
-				const air = event.options.air === 4 ? 4 : 3
-				await send(self, `AIR${air}:RESET`)
+				const air: ResetAir = Number(event.options.air) === 4 ? 4 : 3
+				await send(self, airResetCommand(air))
 			},
 		},
 		air3_toh: {
@@ -153,30 +192,28 @@ export function UpdateActions(self: ModuleInstance): void {
 				},
 			],
 			callback: async (event) => {
-				await send(self, `AIR3TOH:${event.options.state}`)
+				await send(self, air3TohCommand(event.options.state))
 			},
 		},
 		air3_time: {
 			name: 'Set AIR3 time',
-			description: 'Set the radio timer (AIR3) to a number of seconds',
+			description: 'Set the radio timer (AIR3) as m:ss (e.g. 2:05) or as raw seconds',
 			options: [
 				{
-					id: 'seconds',
-					type: 'number',
-					label: 'Seconds',
-					default: 0,
-					min: 0,
-					max: 359999,
+					id: 'time',
+					type: 'textinput',
+					label: 'Time (m:ss or seconds)',
+					default: '0:00',
+					tooltip: 'Examples: 2:05, 0:30, or 125',
 				},
 			],
 			callback: async (event) => {
-				const seconds = Math.max(0, Math.floor(event.options.seconds))
-				await send(self, `AIR3TIME:${seconds}`)
+				await send(self, air3TimeFromClock(event.options.time))
 			},
 		},
 		set_text: {
 			name: 'Set text field',
-			description: 'Set NOW, NEXT, or WARN',
+			description: 'Set NOW, NEXT, or WARN (WARN uses priority 0)',
 			options: [
 				{
 					id: 'field',
@@ -197,7 +234,29 @@ export function UpdateActions(self: ModuleInstance): void {
 				},
 			],
 			callback: async (event) => {
-				await send(self, `${event.options.field}:${event.options.text}`)
+				await send(self, textFieldCommand(asTextField(event.options.field), event.options.text))
+			},
+		},
+		warn: {
+			name: 'WARN',
+			description: 'Set or clear a warning. Empty text clears that priority (WARN:, WARN:1:, WARN:2:).',
+			options: [
+				{
+					id: 'priority',
+					type: 'dropdown',
+					label: 'Priority',
+					default: 0,
+					choices: WARN_PRIORITY_CHOICES,
+				},
+				{
+					id: 'text',
+					type: 'textinput',
+					label: 'Text (empty = clear)',
+					default: '',
+				},
+			],
+			callback: async (event) => {
+				await send(self, warnCommand(asWarnPriority(event.options.priority), event.options.text))
 			},
 		},
 		raw_command: {
