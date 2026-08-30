@@ -1,4 +1,4 @@
-# companion-module-astrastudio-onairscreen
+# Companion module for OnAirScreen
 
 Bitfocus Companion 4 module for [OnAirScreen](https://github.com/saschaludwig/OnAirScreen). Control studio LEDs, AIR timers, and text fields over HTTP, with live variables from `/api/status`.
 
