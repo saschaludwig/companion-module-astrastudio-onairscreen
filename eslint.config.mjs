@@ -3,6 +3,7 @@ import { generateEslintConfig } from '@companion-module/tools/eslint/config.mjs'
 export default [
 	...(await generateEslintConfig({
 		enableTypescript: true,
+		ignores: ['src/register-js-to-ts.mjs'],
 	})),
 	{
 		files: ['**/*.ts'],
