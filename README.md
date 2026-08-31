@@ -21,7 +21,7 @@ The module is not in the Companion Store yet. Use a `.tgz` from GitHub **Release
 5. Set **OnAirScreen IP / Hostname** to the studio PC and **HTTP Port** to `8010` (must match OnAirScreen). Leave **Use WebSocket** on unless you must poll only. Leave **Poll interval** at `500` ms (used when WebSocket is off or disconnected).
 6. Set the connection **Label** to `oas` so variable examples in this README match (`$(oas:air1_time)`). Companion often defaults the label to the module name.
 
-The connection should show **OK** plus instance name and version (for example `Studio-1 · 0.9.9beta2`). If it stays disconnected, check IP, HTTP port, firewall (8010 and 8011), and that OnAirScreen is running.
+The connection should show **OK** plus instance name and version (for example `Studio-1 · 1.0.0beta1`). If it stays disconnected, check IP, HTTP port, firewall (8010 and 8011), and that OnAirScreen is running.
 
 To update, import a newer `.tgz` the same way. Existing connections keep their settings.
 

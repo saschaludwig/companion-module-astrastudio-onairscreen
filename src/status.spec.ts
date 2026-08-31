@@ -31,7 +31,7 @@ const SAMPLE = {
 	warnings: [{ text: 'SILENCE', priority: 0 }],
 	silence: true,
 	lufsIntegrated: true,
-	version: '0.9.9beta2',
+	version: '1.0.0beta1',
 	instance: 'Studio-1',
 }
 
@@ -47,7 +47,7 @@ describe('parseStatus', () => {
 		assert.equal(status.air[3].topOfHour, true)
 		assert.equal(status.now, 'Song')
 		assert.equal(status.instance, 'Studio-1')
-		assert.equal(status.version, '0.9.9beta2')
+		assert.equal(status.version, '1.0.0beta1')
 	})
 
 	it('also accepts numeric keys', () => {
@@ -112,13 +112,13 @@ describe('statusToVariableValues', () => {
 		assert.equal(values.silence, 'true')
 		assert.equal(values.lufs_integrated, 'true')
 		assert.equal(values.instance, 'Studio-1')
-		assert.equal(values.version, '0.9.9beta2')
+		assert.equal(values.version, '1.0.0beta1')
 	})
 })
 
 describe('connectionStatusMessage', () => {
 	it('joins instance and version', () => {
-		assert.equal(connectionStatusMessage(parseStatus(SAMPLE)), 'Studio-1 · 0.9.9beta2')
+		assert.equal(connectionStatusMessage(parseStatus(SAMPLE)), 'Studio-1 · 1.0.0beta1')
 		assert.equal(connectionStatusMessage(parseStatus({ instance: 'A', version: '' })), 'A')
 		assert.equal(connectionStatusMessage(parseStatus({})), undefined)
 	})

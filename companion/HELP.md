@@ -29,7 +29,7 @@ Local development: `corepack enable && yarn install && yarn build`, then symlink
 | WebSocket Port                | _(empty)_   | Empty = HTTP port + 1. Set only if OnAirScreen uses another port |
 | Poll interval (ms)            | `500`       | Used when WebSocket is off or disconnected                       |
 
-The connection status shows instance name and version when connected, for example `Studio-1 · 0.9.9beta2`.
+The connection status shows instance name and version when connected, for example `Studio-1 · 1.0.0beta1`.
 
 ### Actions
 
