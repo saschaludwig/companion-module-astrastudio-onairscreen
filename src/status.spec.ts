@@ -8,6 +8,7 @@ import {
 	isLedOn,
 	isLedTimedflash,
 	isSilence,
+	isLufsIntegrated,
 	isWarnActive,
 	parseStatus,
 	statusToVariableValues,
@@ -29,6 +30,7 @@ const SAMPLE = {
 	texts: { now: 'Song', next: 'Next Song', warn: 'SILENCE' },
 	warnings: [{ text: 'SILENCE', priority: 0 }],
 	silence: true,
+	lufsIntegrated: true,
 	version: '0.9.9beta2',
 	instance: 'Studio-1',
 }
@@ -65,6 +67,7 @@ describe('parseStatus', () => {
 		assert.equal(status.leds[4].timedflash, false)
 		assert.equal(status.air[2].seconds, 0)
 		assert.equal(status.silence, false)
+		assert.equal(status.lufsIntegrated, false)
 		assert.equal(status.warn, '')
 	})
 })
@@ -82,6 +85,7 @@ describe('status helpers', () => {
 		assert.equal(isAirOn(status, 2), false)
 		assert.equal(isAir3Toth(status), true)
 		assert.equal(isSilence(status), true)
+		assert.equal(isLufsIntegrated(status), true)
 		assert.equal(isWarnActive(status), true)
 	})
 
@@ -106,6 +110,7 @@ describe('statusToVariableValues', () => {
 		assert.equal(values.next, 'Next Song')
 		assert.equal(values.warn, 'SILENCE')
 		assert.equal(values.silence, 'true')
+		assert.equal(values.lufs_integrated, 'true')
 		assert.equal(values.instance, 'Studio-1')
 		assert.equal(values.version, '0.9.9beta2')
 	})

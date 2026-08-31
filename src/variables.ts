@@ -38,6 +38,7 @@ export type VariablesSchema = {
 	next: string
 	warn: string
 	silence: string
+	lufs_integrated: string
 	instance: string
 	version: string
 }
@@ -81,6 +82,7 @@ export function UpdateVariableDefinitions(self: ModuleInstance): void {
 		next: { name: 'NEXT text' },
 		warn: { name: 'WARN text' },
 		silence: { name: 'Silence alarm (true/false)' },
+		lufs_integrated: { name: 'Loudness I+LRA session running (true/false)' },
 		instance: { name: 'OnAirScreen instance name' },
 		version: { name: 'OnAirScreen version' },
 	})

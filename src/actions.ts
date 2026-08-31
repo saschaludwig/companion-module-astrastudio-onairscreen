@@ -8,9 +8,11 @@ import {
 	ledCommand,
 	textFieldCommand,
 	warnCommand,
+	lufsIntegratedCommand,
 	type ResetAir,
 	type TextField,
 	type ToggleState,
+	type LufsState,
 	type WarnPriority,
 } from './commands.js'
 import { SLOT_NUMBERS, type SlotNumber } from './status.js'
@@ -60,12 +62,24 @@ export type ActionsSchema = {
 			command: string
 		}
 	}
+	lufs_integrated: {
+		options: {
+			state: LufsState
+		}
+	}
 }
 
 const TOGGLE_CHOICES = [
 	{ id: 'TOGGLE', label: 'Toggle' },
 	{ id: 'ON', label: 'On' },
 	{ id: 'OFF', label: 'Off' },
+]
+
+const LUFS_CHOICES = [
+	{ id: 'TOGGLE', label: 'Toggle' },
+	{ id: 'START', label: 'Start (reset)' },
+	{ id: 'STOP', label: 'Stop' },
+	{ id: 'RESET', label: 'Reset (hide if stopped)' },
 ]
 
 const LED_CHOICES = SLOT_NUMBERS.map((n) => ({ id: n, label: `LED ${n}` }))
@@ -109,6 +123,13 @@ function asTextField(value: string): TextField {
 		return value
 	}
 	return 'NOW'
+}
+
+function asLufsState(value: string): LufsState {
+	if (value === 'START' || value === 'STOP' || value === 'RESET') {
+		return value
+	}
+	return 'TOGGLE'
 }
 
 export function UpdateActions(self: ModuleInstance): void {
@@ -272,6 +293,22 @@ export function UpdateActions(self: ModuleInstance): void {
 			],
 			callback: async (event) => {
 				await send(self, event.options.command)
+			},
+		},
+		lufs_integrated: {
+			name: 'Loudness I+LRA',
+			description: 'Start, stop, toggle, or reset I + LRA (reset restarts if running, hides markers if stopped)',
+			options: [
+				{
+					id: 'state',
+					type: 'dropdown',
+					label: 'State',
+					default: 'TOGGLE',
+					choices: LUFS_CHOICES,
+				},
+			],
+			callback: async (event) => {
+				await send(self, lufsIntegratedCommand(asLufsState(event.options.state)))
 			},
 		},
 	})

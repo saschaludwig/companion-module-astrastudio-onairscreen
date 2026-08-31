@@ -7,6 +7,7 @@ import {
 	air3TohCommand,
 	airCommand,
 	airResetCommand,
+	lufsIntegratedCommand,
 	ledCommand,
 	textFieldCommand,
 	warnCommand,
@@ -20,6 +21,10 @@ describe('command strings', () => {
 		assert.equal(airResetCommand(3), 'AIR3:RESET')
 		assert.equal(airResetCommand(4), 'AIR4:RESET')
 		assert.equal(air3TohCommand('TOGGLE'), 'AIR3TOH:TOGGLE')
+		assert.equal(lufsIntegratedCommand('START'), 'LUFSI:START')
+		assert.equal(lufsIntegratedCommand('STOP'), 'LUFSI:STOP')
+		assert.equal(lufsIntegratedCommand('TOGGLE'), 'LUFSI:TOGGLE')
+		assert.equal(lufsIntegratedCommand('RESET'), 'LUFSI:RESET')
 		assert.equal(air3TimeCommand(125), 'AIR3TIME:125')
 		assert.equal(textFieldCommand('NOW', 'Song'), 'NOW:Song')
 	})

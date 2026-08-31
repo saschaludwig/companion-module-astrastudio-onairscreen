@@ -33,22 +33,23 @@ The connection status shows instance name and version when connected, for exampl
 
 ### Actions
 
-| Action           | Sends                                                                      |
-| ---------------- | -------------------------------------------------------------------------- |
-| LED              | `LED{n}:ON` / `OFF` / `TOGGLE`                                             |
-| AIR timer        | `AIR{n}:ON` / `OFF` / `TOGGLE` (AIR1 = microphone)                         |
-| Reset AIR timer  | `AIR3:RESET` or `AIR4:RESET`                                               |
-| AIR3 top-of-hour | `AIR3TOH:ON` / `OFF` / `TOGGLE`                                            |
-| Set AIR3 time    | `AIR3TIME:seconds` from `m:ss` (e.g. `2:05`) or a raw second count         |
-| Set text field   | `NOW:` / `NEXT:` / `WARN:` plus text                                       |
-| WARN             | `WARN:text`, `WARN:1:text`, `WARN:2:text`; empty text clears that priority |
-| Raw command      | Any `COMMAND:VALUE` (e.g. `CONF:…`)                                        |
+| Action           | Sends                                                                                                    |
+| ---------------- | -------------------------------------------------------------------------------------------------------- |
+| LED              | `LED{n}:ON` / `OFF` / `TOGGLE`                                                                           |
+| AIR timer        | `AIR{n}:ON` / `OFF` / `TOGGLE` (AIR1 = microphone)                                                       |
+| Reset AIR timer  | `AIR3:RESET` or `AIR4:RESET`                                                                             |
+| AIR3 top-of-hour | `AIR3TOH:ON` / `OFF` / `TOGGLE`                                                                          |
+| Loudness I+LRA   | `LUFSI:START` / `STOP` / `TOGGLE` / `RESET` (start and running reset restart; stopped reset hides I+LRA) |
+| Set AIR3 time    | `AIR3TIME:seconds` from `m:ss` (e.g. `2:05`) or a raw second count                                       |
+| Set text field   | `NOW:` / `NEXT:` / `WARN:` plus text                                                                     |
+| WARN             | `WARN:text`, `WARN:1:text`, `WARN:2:text`; empty text clears that priority                               |
+| Raw command      | Any `COMMAND:VALUE` (e.g. `CONF:…`)                                                                      |
 
 A failed command is marked as a failed Companion action. After a successful command the module re-reads `/api/status` immediately.
 
 ### Feedbacks
 
-LED on, LED autoflash, LED timedflash, AIR running, AIR3 TOTH, Silence, WARN not empty.
+LED on, LED autoflash, LED timedflash, AIR running, AIR3 TOTH, Silence, Loudness I+LRA, WARN not empty.
 
 ### Variables
 
@@ -67,9 +68,10 @@ Use the connection label (example assumes `oas`): `$(oas:air1_time)`, `$(oas:led
 | `air3_toth`             | Top-of-hour active                       |
 | `now` / `next` / `warn` | Text lines                               |
 | `silence`               | Silence alarm latched                    |
+| `lufs_integrated`       | Programme I+LRA session running          |
 | `instance`              | Instance name                            |
 | `version`               | OnAirScreen version                      |
 
 ### Presets
 
-LED1–4 toggle with live caption and colour, AIR1–4 with live caption and time (AIR1 = microphone), TOTH, Reset AIR3 / AIR4, NOW / NEXT / WARN display, Clear WARN, Silence alarm.
+LED1–4 toggle with live caption and colour, AIR1–4 with live caption and time (AIR1 = microphone), TOTH, Reset AIR3 / AIR4, NOW / NEXT / WARN display, Clear WARN, Silence alarm, Loudness I+LRA, Reset I+LRA.

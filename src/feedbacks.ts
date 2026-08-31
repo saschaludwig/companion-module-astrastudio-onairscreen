@@ -7,6 +7,7 @@ import {
 	isLedOn,
 	isLedTimedflash,
 	isSilence,
+	isLufsIntegrated,
 	isWarnActive,
 	SLOT_NUMBERS,
 	type SlotNumber,
@@ -42,6 +43,10 @@ export type FeedbacksSchema = {
 		options: Record<string, never>
 	}
 	silence: {
+		type: 'boolean'
+		options: Record<string, never>
+	}
+	lufs_integrated: {
 		type: 'boolean'
 		options: Record<string, never>
 	}
@@ -180,6 +185,21 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 					return false
 				}
 				return isSilence(self.lastStatus)
+			},
+		},
+		lufs_integrated: {
+			name: 'Loudness I+LRA is running',
+			type: 'boolean',
+			defaultStyle: {
+				bgcolor: combineRgb(156, 39, 176),
+				color: combineRgb(255, 255, 255),
+			},
+			options: [],
+			callback: () => {
+				if (!self.lastStatus) {
+					return false
+				}
+				return isLufsIntegrated(self.lastStatus)
 			},
 		},
 		warn_active: {

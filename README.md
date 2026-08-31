@@ -33,7 +33,7 @@ Under **Buttons → Presets**, pick this connection. There are:
 
 - **LEDs** — LED 1–4 toggle; caption and colour follow OnAirScreen
 - **AIR timers** — AIR 1–4 with live caption and time (`m:SS`) on the button (AIR1 = microphone), plus Top-of-Hour and Reset AIR3 / AIR4
-- **Texts / Alarms** — NOW / NEXT / WARN display, Clear WARN, Silence alarm
+- **Texts / Alarms** — NOW / NEXT / WARN display, Clear WARN, Silence alarm, Loudness I+LRA, Reset I+LRA
 
 Drag a preset onto a Stream Deck (or other) button. Press to toggle; AIR buttons show the current timer as `m:SS`.
 
@@ -67,15 +67,16 @@ Use the variable picker (dollar sign) next to the button text field so the prefi
 | `air3_toth`             | Top-of-hour countdown active          |
 | `now` / `next` / `warn` | Text lines                            |
 | `silence`               | Silence alarm latched                 |
+| `lufs_integrated`       | Programme I+LRA session running       |
 | `instance` / `version`  | OnAirScreen identity                  |
 
 ### Actions and feedbacks
 
-On a button you can add actions such as **LED**, **AIR timer**, **Reset AIR timer**, **AIR3 top-of-hour**, **Set AIR3 time** (`2:05` or raw seconds), **Set text field**, **WARN** (priority 0 / 1 / 2; empty text clears that priority), or **Raw command**.
+On a button you can add actions such as **LED**, **AIR timer**, **Reset AIR timer**, **AIR3 top-of-hour**, **Set AIR3 time** (`2:05` or raw seconds), **Loudness I+LRA** (start / stop / toggle / reset), **Set text field**, **WARN** (priority 0 / 1 / 2; empty text clears that priority), or **Raw command**.
 
 A failed HTTP command is reported as a failed Companion action. After a successful command the module re-reads `/api/status` immediately so button colour does not wait for the next poll.
 
-Boolean feedbacks colour the button: LED on, LED autoflash, LED timedflash, AIR running, AIR3 TOTH, Silence, WARN not empty.
+Boolean feedbacks colour the button: LED on, LED autoflash, LED timedflash, AIR running, AIR3 TOTH, Silence, Loudness I+LRA, WARN not empty.
 
 ## License
 

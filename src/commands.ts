@@ -2,6 +2,7 @@ import { parseAirTimeToSeconds } from './format.js'
 import type { SlotNumber } from './status.js'
 
 export type ToggleState = 'ON' | 'OFF' | 'TOGGLE'
+export type LufsState = 'START' | 'STOP' | 'TOGGLE' | 'RESET'
 export type TextField = 'NOW' | 'NEXT' | 'WARN'
 export type ResetAir = 3 | 4
 export type WarnPriority = 0 | 1 | 2
@@ -20,6 +21,10 @@ export function airResetCommand(air: ResetAir): string {
 
 export function air3TohCommand(state: ToggleState): string {
 	return `AIR3TOH:${state}`
+}
+
+export function lufsIntegratedCommand(state: LufsState): string {
+	return `LUFSI:${state}`
 }
 
 export function air3TimeCommand(seconds: number): string {

@@ -25,6 +25,7 @@ export type OasStatus = {
 	warn: string
 	warnings: unknown[]
 	silence: boolean
+	lufsIntegrated: boolean
 	instance: string
 	version: string
 }
@@ -41,6 +42,7 @@ export function emptyStatus(): OasStatus {
 		warn: '',
 		warnings: [],
 		silence: false,
+		lufsIntegrated: false,
 		instance: '',
 		version: '',
 	}
@@ -143,6 +145,7 @@ export function parseStatus(raw: unknown): OasStatus {
 	status.warn = asString(texts.warn)
 	status.warnings = Array.isArray(root.warnings) ? root.warnings : []
 	status.silence = asBool(root.silence)
+	status.lufsIntegrated = asBool(root.lufsIntegrated)
 	status.instance = asString(root.instance)
 	status.version = asString(root.version)
 	return status
@@ -180,6 +183,10 @@ export function isSilence(status: OasStatus): boolean {
 	return status.silence
 }
 
+export function isLufsIntegrated(status: OasStatus): boolean {
+	return status.lufsIntegrated
+}
+
 export function isWarnActive(status: OasStatus): boolean {
 	return status.warn.trim() !== '' || status.warnings.length > 0
 }
@@ -200,6 +207,7 @@ export function statusToVariableValues(status: OasStatus): Record<string, string
 		next: status.next,
 		warn: status.warn,
 		silence: boolToVariable(status.silence),
+		lufs_integrated: boolToVariable(status.lufsIntegrated),
 		instance: status.instance,
 		version: status.version,
 	}

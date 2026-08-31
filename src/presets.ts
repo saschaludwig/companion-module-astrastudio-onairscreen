@@ -11,6 +11,7 @@ const TOTH_BG = combineRgb(255, 153, 0)
 const RESET_BG = combineRgb(0, 80, 160)
 const WARN_BG = combineRgb(255, 165, 0)
 const SILENCE_BG = combineRgb(255, 255, 0)
+const LUFS_BG = combineRgb(156, 39, 176)
 const TEXT_BG = combineRgb(40, 40, 40)
 
 export function UpdatePresets(self: ModuleInstance): void {
@@ -48,9 +49,17 @@ export function UpdatePresets(self: ModuleInstance): void {
 				{
 					id: 'texts_group',
 					name: 'Texts / Alarms',
-					description: 'Live NOW / NEXT / WARN, clear WARN, and silence alarm.',
+					description: 'Live NOW / NEXT / WARN, clear WARN, silence alarm, and loudness I+LRA start/stop/reset.',
 					type: 'simple',
-					presets: ['now_display', 'next_display', 'warn_display', 'warn_clear', 'silence'],
+					presets: [
+						'now_display',
+						'next_display',
+						'warn_display',
+						'warn_clear',
+						'silence',
+						'lufs_integrated',
+						'lufs_integrated_reset',
+					],
 				},
 			],
 		},
@@ -312,6 +321,63 @@ export function UpdatePresets(self: ModuleInstance): void {
 				},
 			},
 		],
+	}
+
+	presets['lufs_integrated'] = {
+		type: 'simple',
+		name: 'Loudness I+LRA',
+		style: {
+			text: 'I+LRA\\n$(oas:lufs_integrated)',
+			size: 'auto',
+			color: INACTIVE_COLOR,
+			bgcolor: INACTIVE_BG,
+			show_topbar: false,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'lufs_integrated',
+						options: { state: 'TOGGLE' },
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: 'lufs_integrated',
+				options: {},
+				style: {
+					color: ACTIVE_COLOR,
+					bgcolor: LUFS_BG,
+				},
+			},
+		],
+	}
+
+	presets['lufs_integrated_reset'] = {
+		type: 'simple',
+		name: 'Reset I+LRA',
+		style: {
+			text: 'Reset\\nI+LRA',
+			size: 'auto',
+			color: ACTIVE_COLOR,
+			bgcolor: RESET_BG,
+			show_topbar: false,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'lufs_integrated',
+						options: { state: 'RESET' },
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
 	}
 
 	self.setPresetDefinitions(structure, presets)
